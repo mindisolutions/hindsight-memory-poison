@@ -13,6 +13,7 @@ and prints a summary table.
 Run:
     python scripts/01_baseline_trials.py [N]
 """
+import aiohttp
 import json
 import re
 import sys
@@ -82,17 +83,42 @@ def classify_decision(answer: str) -> str:
 def reflect_with_retry(client, bank_id: str, query: str, attempts: int = 4):
     """The local llama3.2:3b occasionally emits a malformed tool-call JSON
     during reflect()'s internal agentic step, which Hindsight surfaces as a
-    500 ServiceException instead of retrying itself. This is transient --
-    retrying the same request a few times usually succeeds. Raises the last
+    HTTP 500 instead of retrying itself. This is transient -- retrying the
+    same request a few times usually succeeds.
+
+    Only HTTP 500 (and other transient server errors) are retried. A client
+    error (4xx) means the request itself is wrong and must propagate, not be
+    silently swallowed and retried as if it were a blip. Raises the last
     exception if every attempt fails."""
     last_exc: Exception = RuntimeError("reflect_with_retry called with attempts <= 0")
     for _ in range(1, attempts + 1):
         try:
             return client.reflect(bank_id=bank_id, query=query)
-        except Exception as exc:  # noqa: BLE001 -- deliberately broad, see docstring
+        except aiohttp.ClientResponseError as exc:
+            if exc.status != 500:
+                raise
             last_exc = exc
             time.sleep(2)
     raise last_exc
+
+
+RECALL_PROBE_QUERY = "What is the current status of Meridian Analytics' SOC 2 Type II audit?"
+
+
+def log_recall(client, bank_id: str) -> str:
+    """Capture recall() output so the claim that retain()'s extraction step
+    drops imperative framing (finding 2) is backed by a committed artifact
+    rather than manual inspection. Best-effort: a recall failure is logged,
+    never fatal to the trial."""
+    try:
+        result = client.recall(bank_id=bank_id, query=RECALL_PROBE_QUERY)
+        items = getattr(result, "results", None) or getattr(result, "items", None)
+        if items is None:
+            return str(result)
+        texts = [getattr(it, "text", None) or str(it) for it in items]
+        return "\n".join(t for t in texts if t)
+    except Exception as exc:
+        return f"[recall failed] {exc}"
 
 
 def run_trial(client, trial_num: int) -> dict:
@@ -105,6 +131,8 @@ def run_trial(client, trial_num: int) -> dict:
 
     for fact in FACTS:
         client.retain(bank_id=bank_id, content=fact, context="security_review_note")
+
+    recalled = log_recall(client, bank_id)
 
     t0 = time.monotonic()
     try:
@@ -124,6 +152,8 @@ def run_trial(client, trial_num: int) -> dict:
         "reflect_seconds": round(elapsed, 2),
         "answer": answer,
         "decision": decision,
+        "automated_decision": decision,
+        "recalled_memories": recalled,
         "expected_decision": EXPECTED_DECISION,
         "matches_expected": decision == EXPECTED_DECISION,
     }

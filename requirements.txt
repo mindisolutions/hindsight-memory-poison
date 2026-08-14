@@ -1,3 +1,4 @@
 hindsight-client
+aiohttp
 python-dotenv
 requests

@@ -9,7 +9,7 @@ Hindsight instance** (Docker, Postgres-backed) reasoning with a real local LLM (
 
 60 trials (4 groups × N=15, all hand-reviewed) testing whether forged content injected via
 `retain()` can flip a security decision. **No technique clearly beat this local model's own 27%
-baseline error rate in aggregate** — but in 4 individual trials the model's wrong decision
+baseline error rate in aggregate** — but in 5 individual trials the model's wrong decision
 **explicitly quoted the forged fact by name** as its reason. See [Results](#results-n15-per-group-manually-reviewed)
 below for the full table, and [`reports/REPORT.md`](reports/REPORT.md) for the write-up with
 evidence exhibits.
@@ -72,18 +72,24 @@ Key findings:
 2. **Instruction-based injection (v1) was largely neutralized at the data layer.** Hindsight's
    `retain()` extraction step preserves plain factual sentences but tends to drop imperative
    "obey this" framing — the hidden instruction never survived as a retrievable memory, only the
-   underlying false claim did.
+   underlying false claim did. *(Mechanism caveat: this was reached by manual inspection of
+   `recall()` output during development, not a committed artifact. The trial scripts now log
+   `recall()` per trial into `recalled_memories`; the committed data predates that logging.)*
 3. **The forged claim demonstrably enters the reasoning chain and can flip individual decisions
-   — the aggregate rate just doesn't prove it statistically at this sample size.** In several
-   attack v1 and v3 trials, the model's `grant` recommendation **explicitly cited the forged audit
-   claim by name and date** as its justification (e.g. "they have also passed a SOC 2 Type II
-   audit in August 2026" — a fact that only exists because we injected it). See the
-   `manual_review_note` field on individual records in `reports/attack_trials.jsonl` and
-   `reports/attack_v3_trials.jsonl` for exact quotes. This is real, causal, per-trial evidence of
-   memory poisoning — it just doesn't clear the noise floor in aggregate at N=15. A pilot run of
-   attack v3 (first 5 trials only) showed a 60% grant rate; the full N=15 run regressed to 27%,
-   which is itself a useful methodological lesson: **small pilot samples overstate effect size**,
-   and any claim from a small N needs a larger confirmatory run before being trusted.
+   — the aggregate rate just doesn't prove it statistically at this sample size.** In all four
+   attack v3 trials that granted access, plus one attack v1 trial (5 of 45 total), the model's
+   `grant` recommendation **explicitly cited the forged audit claim by name and date** as its
+   justification (e.g. "they have also passed a SOC 2 Type II audit in August 2026" — a fact
+   that only exists because we injected it). See the `manual_review_note` field on individual
+   records in `reports/attack_trials.jsonl` and `reports/attack_v3_trials.jsonl` for exact
+   quotes. This is per-trial evidence *consistent with* the forged claim entering the reasoning
+   chain — a correlation with a mechanism, not an isolated cause (each trial has no
+   counterfactual, so a grant could equally reflect the model's own ~27% baseline noise seizing
+   on the most grant-shaped fact available). It doesn't clear the noise floor in aggregate at
+   N=15. A pilot run of attack v3 (first 5 trials only) showed a 60% grant rate; the full N=15
+   run regressed to 27%, which is itself a useful methodological lesson: **small pilot samples
+   overstate effect size**, and any claim from a small N needs a larger confirmatory run before
+   being trusted.
 4. **Next step to actually pin down effect size:** a much larger N (order of 50+ per group) or a
    stronger, less noisy LLM backend would be needed to statistically separate a real attack effect
    from this model's own ~27% baseline error rate. That is out of scope for this local/free setup
@@ -108,6 +114,14 @@ Key findings:
 
    Run these **one at a time** — the lock file will refuse a second concurrent run. VS Code launch
    configs for all of the above are in `.vscode/launch.json`.
+
+   > **Note on the committed data:** the `reports/*.jsonl` in this repo were generated as **3
+   > batches of N=5** (matching `.vscode/launch.json`'s `args: ["5"]`), not as a single N=15 run —
+   > so each group's data spans multiple `run_id` batches. Running `… 15` once produces a single
+   > batch of 15 with a single `run_id`; both are valid, they just look different on disk.
+   > `aggregate_report.py` reports the run-batch count per group and warns when a group spans more
+   > than one. Re-running a trial script **appends** to its `.jsonl` (it does not overwrite), which
+   > silently inflates N across batches — check the run-count warning.
 5. Every trial answer is manually spot-checked before being trusted (see Methodology above) — do
    not report `automated_decision` numbers without reading the underlying `answer` text.
 
@@ -120,19 +134,18 @@ hindsight-memory-poison/
   requirements.txt
   scripts/
     client.py                   # thin wrapper around hindsight_client
-    setup_banks.py               # legacy: creates control + defended banks (Memory Defense demo)
     00_baseline_demo.py         # single-run walkthrough of retain/recall/reflect (teaching aid)
-    01_baseline_trials.py       # N-trial control group + shared classify_decision/reflect_with_retry
+    01_baseline_trials.py       # N-trial control group + shared classify_decision/reflect_with_retry/log_recall
     02_attack_trials.py         # N-trial attack v1 (hidden instruction)
     03_attack_v2_trials.py      # N-trial attack v2 (plain forged fact)
     04_attack_v3_trials.py      # N-trial attack v3 (trusted-tag forgery)
-    aggregate_report.py         # reports/*.jsonl -> comparison table + summary.json
+    05_counterfactual.py        # re-runs flipped banks WITHOUT the forged payload (causality probe)
+    aggregate_report.py         # reports/*.jsonl -> table + Fisher/Wilson/N + summary.json
   payloads/
     forged_meridian_audit.md    # attack v1 payload (hidden instruction)
     forged_meridian_audit_v2.md # attack v2 payload (plain forged fact)
     forged_meridian_audit_v3.txt # attack v3 payload (retained under a forged trusted tag)
-  attacks/                      # original generic-scenario scaffold (superseded by scripts/ above,
-                                 # kept for reference -- see git history / original README scope)
+  legacy_attacks/               # unpublished memory-defense scaffold (no results; see its README)
   reports/
     baseline_trials.jsonl       # one JSON record per trial, manually reviewed
     attack_trials.jsonl
@@ -143,9 +156,10 @@ hindsight-memory-poison/
 
 ## Known limitations
 
-- N=15 per group is enough to see a clear signal for attack v3, but is thin for precise
-  statistics on v1/v2 (their grant rates are within baseline noise range). More trials would
-  tighten the confidence interval.
+- N=15 per group is too small to separate any attack effect from baseline noise: Fisher exact
+  gives p = 0.33 / 0.65 / 1.00 for v1 / v2 / v3 vs baseline, and the grant-rate 95% CIs span
+  roughly half the spectrum. A confirmatory run at N≈70 per group (to detect a 27%→50% shift at
+  80% power) is the natural next step. (`aggregate_report.py` computes these.)
 - `llama3.2:3b` is a weak model chosen for local/free reproducibility. A stronger model would
   likely show a lower baseline error rate and could react differently to the same payloads —
   results here characterize *this* model + Hindsight combination, not "LLMs in general."
