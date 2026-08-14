@@ -141,6 +141,20 @@ Grant Meridian Analytics API access under specific conditions
 - **Sanitize before `retain()`, not after.** Strip HTML comments and other non-visible instruction-carrying markup from scraped or tool-sourced content before it ever reaches memory. This study's own v1 payload shows extraction already discards imperative framing — formalizing and hardening that behavior (rather than relying on it as an accidental side effect) closes the gap deliberately.
 - **Don't let a single `reflect()` call gate an irreversible action.** For decisions with real consequence — granting access, approving a payment, deleting data — require either a second independent read that must agree, or a check against a fact that cannot be forged by the same ingestion path being evaluated (e.g. verifying audit status against an external registry, not the agent's own memory).
 
+## 7. Subsequent work (documented in the README)
+
+This report covers the original N=15 `llama3.2:3b` study. The repository has since been
+extended in three directions, all documented in [`README.md`](../README.md):
+
+- **Counterfactual probe (F2)** — the flipped banks re-run *without* the forged fact,
+  showing a real-but-partial causal effect (`reports/counterfactual_probe.jsonl`).
+- **Stronger-model comparison** — the same study against DeepSeek (`v4-flash`,
+  `v4-pro`) and an OpenRouter reasoning model (Nemotron-omni-30b), which are far more
+  resistant to the single-injection attacks but vulnerable to evidence-structure attacks
+  (corroboration v4, recency v5).
+- **Stress-test matrix** — four models × seven techniques, quantifying how model
+  capability changes (rather than eliminates) the attack surface.
+
 ---
 
 Raw data: `reports/baseline_trials.jsonl`, `reports/attack_trials.jsonl`, `reports/attack_v2_trials.jsonl`, `reports/attack_v3_trials.jsonl` · `reports/summary.json` · reproduce with `python scripts/aggregate_report.py`.
