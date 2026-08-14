@@ -141,6 +141,9 @@ hindsight-memory-poison/
     04_attack_v3_trials.py      # N-trial attack v3 (trusted-tag forgery)
     05_counterfactual.py        # re-runs flipped banks WITHOUT the forged payload (causality probe)
     06_recall_demo.py           # demonstrates recall() logging (F4) to a separate file
+    07_attack_v4_repetition.py # attack v4 (3x repeated injection)
+    08_attack_v5_temporal.py   # attack v5 (temporal ordering / latest-wins)
+    09_attack_v6_policy.py     # attack v6 (forged policy)
     aggregate_report.py         # reports/*.jsonl -> table + Fisher/Wilson/N + summary.json
   payloads/
     forged_meridian_audit.md    # attack v1 payload (hidden instruction)
@@ -199,6 +202,47 @@ independent audit verification before relying on it. This is direct empirical su
 for the review's central architectural finding (F3): the forged `context` tag is the
 one attack surface that survives a stronger model, because it isn't prompt injection —
 it's an unauthenticated trust signal in the retain() path.
+
+## Stress test: model × technique matrix
+
+The same scenario, extended across four models and six attack techniques
+(see `reports/{deepseek,pro,llama32_new,or_reasoning}/`).
+
+### Model comparison — baseline vs v3 (trusted-tag forgery)
+
+| Model | baseline grant | v3 grant | Fisher p (v3 vs baseline) |
+|---|---|---|---|
+| llama3.2:3b (weak, local) | 27% (4/15) | 27% (4/15) | n.s. |
+| DeepSeek v4-flash | 0% (0/12) | 8% (1/12) | n.s. |
+| DeepSeek v4-pro (strongest) | 0% (0/10) | 30% (3/10) | 0.105 |
+| Nemotron-omni-30b (reasoning) | 0% (0/6) | **83% (5/6)** | **0.0076** |
+
+The reasoning model is the *most* vulnerable to the trusted-tag forgery: it
+correctly denies at baseline, then trusts the forged "August 2026 audit" note and
+reasons its way to a conditional grant 5/6 times. (gpt-oss-20b returned "unclear"
+on 5/5 baseline trials — it hedges rather than deciding.)
+
+### New attack techniques vs DeepSeek v4-flash
+
+| Technique | grant | Fisher p vs v3 (8%) |
+|---|---|---|
+| v3 single trusted-tag | 8% (1/12) | — |
+| v4 3× repetition | **75% (6/8)** | **0.0044** |
+| v5 temporal "latest wins" | **100% (8/8)** | **0.0001** |
+| v6 forged policy | 0% (0/8) | — |
+
+Corroboration (v4) and recency (v5) crack the strong model that single injection
+(v3) barely touched. The weak model was *not* flipped by the same techniques
+(v4 0/8, v5 1/8) — flash v4 ≫ llama3.2 v4 (p=0.0035).
+
+### What this means
+
+Model capability does not protect against memory poisoning — it changes the
+attack surface. Weak models are too noisy to flip systematically; strong models
+are vulnerable to evidence-weighing attacks (corroboration, recency); reasoning
+models are vulnerable to forged trust (the unauthenticated `context` tag). The one
+attack that scaled to every strong/reasoning model is the trusted-tag forgery
+(F3) — an architectural trust-signal problem, not a prompt-injection problem.
 
 ## Known limitations
 
