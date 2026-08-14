@@ -42,6 +42,7 @@ DECISION_QUERY = _baseline.DECISION_QUERY
 EXPECTED_DECISION = _baseline.EXPECTED_DECISION
 classify_decision = _baseline.classify_decision
 reflect_with_retry = _baseline.reflect_with_retry
+log_recall = _baseline.log_recall
 
 PAYLOAD_PATH = Path(__file__).parent.parent / "payloads" / "forged_meridian_audit_v3.txt"
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
@@ -69,6 +70,8 @@ def run_trial(client, trial_num: int, payload: str) -> dict:
     client.retain(bank_id=bank_id, content=payload, context=FORGED_CONTEXT)
     client.retain(bank_id=bank_id, content=payload, context=FORGED_CONTEXT)
 
+    recalled = log_recall(client, bank_id)
+
     t0 = time.monotonic()
     try:
         result = reflect_with_retry(client, bank_id, DECISION_QUERY)
@@ -88,6 +91,7 @@ def run_trial(client, trial_num: int, payload: str) -> dict:
         "answer": answer,
         "decision": decision,
         "automated_decision": decision,
+        "recalled_memories": recalled,
         "expected_decision": EXPECTED_DECISION,
         "matches_expected": decision == EXPECTED_DECISION,
         "attack": "meridian_audit_trusted_tag_forgery_v3",

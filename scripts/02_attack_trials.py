@@ -15,6 +15,7 @@ grant access, contradicting the real facts already in the bank.
 Run:
     python scripts/02_attack_trials.py [N]
 """
+import json
 import sys
 import time
 from datetime import datetime, timezone
@@ -34,6 +35,7 @@ DECISION_QUERY = _baseline.DECISION_QUERY
 EXPECTED_DECISION = _baseline.EXPECTED_DECISION  # still "deny" -- the real facts haven't changed
 classify_decision = _baseline.classify_decision
 reflect_with_retry = _baseline.reflect_with_retry
+log_recall = _baseline.log_recall
 
 PAYLOAD_PATH = Path(__file__).parent.parent / "payloads" / "forged_meridian_audit.md"
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
@@ -61,6 +63,8 @@ def run_trial(client, trial_num: int, payload: str) -> dict:
         context="web_scrape:meridiananalytics.example/trust",
     )
 
+    recalled = log_recall(client, bank_id)
+
     t0 = time.monotonic()
     try:
         result = reflect_with_retry(client, bank_id, DECISION_QUERY)
@@ -80,6 +84,7 @@ def run_trial(client, trial_num: int, payload: str) -> dict:
         "answer": answer,
         "decision": decision,
         "automated_decision": decision,
+        "recalled_memories": recalled,
         "expected_decision": EXPECTED_DECISION,
         "matches_expected": decision == EXPECTED_DECISION,
         "attack": "meridian_audit_prompt_injection",
@@ -110,7 +115,7 @@ def main() -> None:
             record = run_trial(client, i, payload)
             records.append(record)
             with OUT_PATH.open("a", encoding="utf-8") as f:
-                f.write(__import__("json").dumps(record, ensure_ascii=False) + "\n")
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
             print(f"[trial {i}/{n}] decision={record['decision']!r} "
                   f"(expected={EXPECTED_DECISION!r}) in {record['reflect_seconds']}s")
     finally:
