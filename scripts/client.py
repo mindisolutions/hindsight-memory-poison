@@ -12,6 +12,7 @@ used a raw-HTTP `ensure_bank`/`set_memory_defense` path was moved to
 """
 
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from hindsight_client import Hindsight
@@ -20,6 +21,20 @@ load_dotenv()
 
 BASE_URL = os.environ.get("HINDSIGHT_BASE_URL", "http://localhost:8888")
 TENANT = "default"
+
+
+def reports_dir() -> Path:
+    """Resolve the reports output directory.
+
+    Defaults to <repo>/reports. Override with the REPORTS_DIR env var (relative
+    to the repo root, or absolute) so e.g. a DeepSeek comparison run can write
+    to reports/deepseek/ without touching the committed llama3.2:3b data.
+    """
+    base = os.environ.get("REPORTS_DIR")
+    if base:
+        p = Path(base)
+        return p if p.is_absolute() else Path(__file__).parent.parent / p
+    return Path(__file__).parent.parent / "reports"
 
 
 def get_client() -> Hindsight:
