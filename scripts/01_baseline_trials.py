@@ -13,13 +13,14 @@ and prints a summary table.
 Run:
     python scripts/01_baseline_trials.py [N]
 """
-import aiohttp
 import json
 import re
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+
+from hindsight_client_api.exceptions import ApiException
 
 sys.path.insert(0, str(Path(__file__).parent))
 from client import get_client  # noqa: E402
@@ -94,8 +95,8 @@ def reflect_with_retry(client, bank_id: str, query: str, attempts: int = 4):
     for _ in range(1, attempts + 1):
         try:
             return client.reflect(bank_id=bank_id, query=query)
-        except aiohttp.ClientResponseError as exc:
-            if exc.status != 500:
+        except ApiException as exc:
+            if exc.status is not None and exc.status < 500:
                 raise
             last_exc = exc
             time.sleep(2)
