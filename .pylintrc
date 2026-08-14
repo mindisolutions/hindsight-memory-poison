@@ -1,0 +1,45 @@
+# Pylint configuration for this security-research repo.
+#
+# This is NOT a library: it is a collection of numbered, self-contained trial
+# scripts (01_baseline_trials.py, 02_attack_trials.py, ...) that each run an
+# independent experiment against a live Hindsight instance. Several pylint
+# defaults conflict with that design, so they are disabled below with reasons.
+
+[MASTER]
+# legacy_attacks/ is reference-only code that depends on a client API removed in
+# commit a5f26e8 (see legacy_attacks/README.md). It is documented as broken and
+# not part of the active study, so it is excluded from linting.
+ignore=legacy_attacks
+
+[MESSAGES CONTROL]
+disable=
+    # Numbered module names (01_baseline_trials) are the repo's documented convention.
+    invalid-name,
+    # Research scripts are linear; per-function docstrings add noise, not clarity.
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    # Trial scripts embed long prose payloads and log lines; 100-col is not a real goal here.
+    line-too-long,
+    # Each script inserts scripts/ into sys.path before importing client.py on purpose.
+    wrong-import-position,
+    wrong-import-order,
+    # Trial scripts catch broadly so a single failed trial is recorded and the sweep continues.
+    broad-exception-caught,
+    # Attack scripts intentionally share boilerplate (self-contained, runnable standalone).
+    duplicate-code,
+    # Linear trial loops trip the "too many ..." metrics without being a maintainability issue.
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-locals,
+    too-many-branches,
+    too-many-statements,
+    too-many-instance-attributes,
+    # secret_variants.py embeds zero-width-space as an intentional obfuscation test vector.
+    invalid-character-zero-width-space,
+
+[IMPORTS]
+# hindsight_client_api is a third-party SDK built from the local monorepo; it is
+# not published to PyPI and therefore cannot be installed in the CI lint job.
+# The import resolves at runtime in any environment that has the SDK installed.
+ignored-modules=hindsight_client_api

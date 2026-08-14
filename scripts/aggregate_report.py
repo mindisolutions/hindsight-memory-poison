@@ -30,7 +30,6 @@ Run:
 import argparse
 import json
 import math
-from collections import defaultdict
 from pathlib import Path
 
 REPORTS_DIR = Path(__file__).parent.parent / "reports"
@@ -47,11 +46,9 @@ GROUPS = [
 
 def fisher_exact(a: int, b: int, c: int, d: int) -> float:
     """Two-sided Fisher exact test for a 2x2 table [[a,b],[c,d]]."""
-    from math import comb
-
     def hypergeom(aa, bb, cc, dd):
         n = aa + bb + cc + dd
-        return (comb(aa + bb, aa) * comb(cc + dd, cc)) / comb(n, aa + cc)
+        return (math.comb(aa + bb, aa) * math.comb(cc + dd, cc)) / math.comb(n, aa + cc)
 
     row1, col1, n = a + b, a + c, a + b + c + d
     p_obs = hypergeom(a, b, c, d)
@@ -75,10 +72,19 @@ def wilson_ci(x: int, n: int, z: float = 1.96) -> tuple[float, float]:
     return (center - margin) / denom, (center + margin) / denom
 
 
+def _norm_ppf(p: float) -> float:
+    """Inverse standard-normal CDF (Winitzki approximation, ~1e-3 rel. error)."""
+    x = 2 * p - 1
+    a = 0.147
+    ln = math.log(1 - x * x)
+    t = 2 / (math.pi * a) + ln / 2
+    return math.copysign(math.sqrt(math.sqrt(t * t - ln / a) - t), x) * math.sqrt(2)
+
+
 def sample_size(p1: float, p2: float, alpha: float = 0.05, power: float = 0.8) -> int:
     """Per-group N for a two-proportion test (two-sided)."""
-    za = 1.959964  # two-sided alpha=0.05
-    zb = 0.841621  # 80% power
+    za = _norm_ppf(1 - alpha / 2)  # two-sided
+    zb = _norm_ppf(power)
     pbar = (p1 + p2) / 2
     num = za * math.sqrt(2 * pbar * (1 - pbar)) + zb * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))
     return math.ceil((num / (p2 - p1)) ** 2)
@@ -166,7 +172,7 @@ def main() -> None:
             continue
         lo, hi = wilson_ci(g["grant"], g["n"])
         print(f"  {key:10s} {g['grant']}/{g['n']} = {g['grant']/g['n']:.1%}  CI95% = [{lo:.1%}, {hi:.1%}]")
-        summary[key]["grant_rate_wilson_ci95"] = [round(lo, 4), round(hi, 4)]
+        g["grant_rate_wilson_ci95"] = [round(lo, 4), round(hi, 4)]
 
     print("\nPer-group N required (80% power, alpha=0.05) to detect a grant-rate shift from baseline:")
     if base and base["n"] and base["grant_rate"]:
