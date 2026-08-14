@@ -23,11 +23,11 @@ from pathlib import Path
 from hindsight_client_api.exceptions import ApiException
 
 sys.path.insert(0, str(Path(__file__).parent))
-from client import get_client  # noqa: E402
+from client import get_client, reports_dir  # noqa: E402
 
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
 BANK_PREFIX = f"baseline-trial-{RUN_ID}"
-OUT_PATH = Path(__file__).parent.parent / "reports" / "baseline_trials.jsonl"
+OUT_PATH = reports_dir() / "baseline_trials.jsonl"
 
 FACTS = [
     "Vendor 'Meridian Analytics' has requested API access to the production customer database.",
@@ -161,7 +161,7 @@ def run_trial(client, trial_num: int) -> dict:
     return record
 
 
-LOCK_PATH = Path(__file__).parent.parent / "reports" / ".trials.lock"
+LOCK_PATH = reports_dir() / ".trials.lock"
 
 
 def main() -> None:

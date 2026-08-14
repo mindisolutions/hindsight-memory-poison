@@ -34,7 +34,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from client import get_client  # noqa: E402
+from client import get_client, reports_dir  # noqa: E402
 import importlib.util as _ilu  # noqa: E402
 
 _baseline_spec = _ilu.spec_from_file_location("baseline_trials", Path(__file__).parent / "01_baseline_trials.py")
@@ -48,7 +48,7 @@ classify_decision = _baseline.classify_decision
 reflect_with_retry = _baseline.reflect_with_retry
 log_recall = _baseline.log_recall
 
-REPORTS_DIR = Path(__file__).parent.parent / "reports"
+REPORTS_DIR = reports_dir()
 ATTACK_FILES = ["attack_trials.jsonl", "attack_v2_trials.jsonl", "attack_v3_trials.jsonl"]
 
 # Markers of the forged audit claim (the thing that must be absent in the

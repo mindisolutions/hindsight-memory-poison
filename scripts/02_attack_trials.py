@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from client import get_client  # noqa: E402
+from client import get_client, reports_dir  # noqa: E402
 import importlib.util as _ilu  # noqa: E402
 
 _baseline_spec = _ilu.spec_from_file_location("baseline_trials", Path(__file__).parent / "01_baseline_trials.py")
@@ -40,8 +40,8 @@ log_recall = _baseline.log_recall
 PAYLOAD_PATH = Path(__file__).parent.parent / "payloads" / "forged_meridian_audit.md"
 RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
 BANK_PREFIX = f"attack-trial-{RUN_ID}"
-OUT_PATH = Path(__file__).parent.parent / "reports" / "attack_trials.jsonl"
-LOCK_PATH = Path(__file__).parent.parent / "reports" / ".trials.lock"
+OUT_PATH = reports_dir() / "attack_trials.jsonl"
+LOCK_PATH = reports_dir() / ".trials.lock"
 
 
 def run_trial(client, trial_num: int, payload: str) -> dict:
