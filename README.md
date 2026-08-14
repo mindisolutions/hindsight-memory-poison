@@ -177,6 +177,29 @@ grant rate on these banks from 100% to ≈13%, but one of the four flipped banks
 baseline noise. The counterfactual is what turns finding 3's "correlation with a
 mechanism" into a measured, per-bank causal estimate.
 
+## DeepSeek comparison (stronger model)
+
+The same study re-run against **DeepSeek (`deepseek-v4-flash`)** — a stronger cloud
+model — through an isolated `hindsight_api` instance (same architecture, fresh DB).
+Committed under `reports/deepseek/`. N=12 per group.
+
+| Group | llama3.2:3b | DeepSeek |
+|---|---|---|
+| Baseline | 27% (4/15) | **0% (0/12)** |
+| Attack v1 (hidden instruction) | 7% (1/15) | **0% (0/12)** |
+| Attack v2 (plain forged fact) | 13% (2/15) | **0% (0/12)** |
+| Attack v3 (trusted-tag forgery) | 27% (4/15) | **8% (1/12)** |
+
+The stronger model has essentially no natural error on this decision (0% baseline vs
+27%) and fully resists v1 and v2. The **only** technique that flipped it is v3 — the
+trusted-tag forgery — and even then just once, and not naively: the model granted
+*conditionally*, invoking a "latest-statement-wins" rule (the forged note was retained
+later and marked as superseding the real expiration) and explicitly requiring
+independent audit verification before relying on it. This is direct empirical support
+for the review's central architectural finding (F3): the forged `context` tag is the
+one attack surface that survives a stronger model, because it isn't prompt injection —
+it's an unauthenticated trust signal in the retain() path.
+
 ## Known limitations
 
 - N=15 per group is too small to separate any attack effect from baseline noise: Fisher exact
