@@ -1,0 +1,42 @@
+{
+  "baseline": {
+    "label": "Baseline (no attack)",
+    "path": "reports/baseline_trials.jsonl",
+    "n": 15,
+    "deny": 8,
+    "grant": 4,
+    "unclear": 3,
+    "error": 0,
+    "grant_rate": 0.2667
+  },
+  "attack_v1": {
+    "label": "Attack v1: hidden instruction (prompt injection)",
+    "path": "reports/attack_trials.jsonl",
+    "n": 15,
+    "deny": 12,
+    "grant": 1,
+    "unclear": 2,
+    "error": 0,
+    "grant_rate": 0.0667
+  },
+  "attack_v2": {
+    "label": "Attack v2: plain forged fact",
+    "path": "reports/attack_v2_trials.jsonl",
+    "n": 15,
+    "deny": 8,
+    "grant": 2,
+    "unclear": 5,
+    "error": 0,
+    "grant_rate": 0.1333
+  },
+  "attack_v3": {
+    "label": "Attack v3: trusted-tag forgery + reinforcement",
+    "path": "reports/attack_v3_trials.jsonl",
+    "n": 15,
+    "deny": 8,
+    "grant": 4,
+    "unclear": 3,
+    "error": 0,
+    "grant_rate": 0.2667
+  }
+}
