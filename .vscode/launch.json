@@ -21,7 +21,7 @@
             "justMyCode": true
         },
         {
-            "name": "Attack trials (N runs, prompt injection)",
+            "name": "Attack v1 trials (N runs, prompt injection)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/02_attack_trials.py",
@@ -51,37 +51,105 @@
             "justMyCode": true
         },
         {
-            "name": "Attack 1: prompt injection via retain",
+            "name": "Counterfactual probe (F2, causality)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/attacks/01_prompt_injection_retain.py",
+            "program": "${workspaceFolder}/scripts/05_counterfactual.py",
+            "args": ["10"],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "justMyCode": true
         },
         {
-            "name": "Attack 2: secret exfiltration",
+            "name": "Recall-logging demo (F4)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/attacks/02_secret_exfiltration.py",
+            "program": "${workspaceFolder}/scripts/06_recall_demo.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "justMyCode": true
         },
         {
-            "name": "Attack 3: trusted tag forgery",
+            "name": "Attack v4 trials (repetition / amplification)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/attacks/03_trusted_tag_forgery.py",
+            "program": "${workspaceFolder}/scripts/07_attack_v4_repetition.py",
+            "args": ["8"],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "justMyCode": true
         },
         {
-            "name": "setup_banks.py",
+            "name": "Attack v5 trials (temporal ordering)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/scripts/setup_banks.py",
+            "program": "${workspaceFolder}/scripts/08_attack_v5_temporal.py",
+            "args": ["8"],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Attack v6 trials (forged policy)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/09_attack_v6_policy.py",
+            "args": ["8"],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Attack v7 trials (authority spoofing)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/10_attack_v7_authority.py",
+            "args": ["8"],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Aggregate report",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/aggregate_report.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Legacy: prompt injection via retain",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/legacy_attacks/01_prompt_injection_retain.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Legacy: secret exfiltration",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/legacy_attacks/02_secret_exfiltration.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Legacy: trusted tag forgery",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/legacy_attacks/03_trusted_tag_forgery.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },
+        {
+            "name": "Legacy: setup_banks.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/legacy_attacks/setup_banks.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "justMyCode": true
