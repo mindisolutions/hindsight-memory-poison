@@ -9,7 +9,11 @@
 # legacy_attacks/ is reference-only code that depends on a client API removed in
 # commit a5f26e8 (see legacy_attacks/README.md). It is documented as broken and
 # not part of the active study, so it is excluded from linting.
-ignore=legacy_attacks
+ignore-paths=^legacy_attacks/
+# Third-party deps that cannot be installed in the CI lint job: hindsight_client
+# and hindsight_client_api are built from the local monorepo (not on PyPI), and
+# dotenv/python-dotenv is a runtime dep irrelevant to static analysis here.
+ignored-modules=hindsight_client_api,hindsight_client,dotenv
 
 [MESSAGES CONTROL]
 disable=
@@ -37,9 +41,3 @@ disable=
     too-many-instance-attributes,
     # secret_variants.py embeds zero-width-space as an intentional obfuscation test vector.
     invalid-character-zero-width-space,
-
-[IMPORTS]
-# hindsight_client_api is a third-party SDK built from the local monorepo; it is
-# not published to PyPI and therefore cannot be installed in the CI lint job.
-# The import resolves at runtime in any environment that has the SDK installed.
-ignored-modules=hindsight_client_api
