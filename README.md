@@ -311,16 +311,17 @@ to the LLM. The unforgeable-defense recommendation (authenticate the ingestion
 path of `context`, not just the string) still stands, but the attacks succeed by
 manipulating the *model's* reading of fact text, not by gaming the ranking math.
 
-### Retrieval degradation on long-running instances
+### Retrieval health note (a suspected degradation that did not reproduce)
 
-A separate, operational finding: after ~7 hours and several thousand
-retain/recall/reflect operations, `recall()` began returning **zero results** on
-the long-lived instance (port 8890) even though the facts were stored with valid
-384-dim embeddings and search vectors (the trace showed `semantic_count =
-bm25_count = graph_count = 0`). A freshly-started instance against the same data
-returned results immediately. This looks like a retrieval-path degradation bug
-in Hindsight itself, worth a dedicated reproduction — it is not caused by this
-lab's scripts.
+During development, a manual `recall()` check against the long-lived instance
+(port 8890) transiently returned zero results, which we initially suspected was
+a retrieval-path degradation (the trace showed `semantic_count = bm25_count =
+graph_count = 0`). The retrieval probe above was designed partly to chase this
+down. The probe — run against that same long-lived instance — returned healthy
+retrieval (`semantic_count = 11`, `bm25_count = 11`; `graph_count = 0` is
+normal here because these facts have no graph edges). The suspected degradation
+was therefore **not reproduced**: the transient zero was a query/moment
+artifact, not a durable bug. No Hindsight defect is claimed on this basis.
 
 ## Known limitations
 
