@@ -213,7 +213,7 @@ The same scenario, extended across four models and six attack techniques
 | Model | baseline grant | v3 grant | Fisher p (v3 vs baseline) |
 |---|---|---|---|
 | llama3.2:3b (weak, local) | 27% (4/15) | 27% (4/15) | n.s. |
-| DeepSeek v4-flash | 0% (0/12) | 8% (1/12) | n.s. |
+| DeepSeek v4-flash | 0% (0/12) | 17% (5/30) | 0.06 |
 | DeepSeek v4-pro (strongest) | 0% (0/10) | 30% (3/10) | 0.105 |
 | Nemotron-omni-30b (reasoning) | 0% (0/6) | **83% (5/6)** | **0.0076** |
 
@@ -222,27 +222,33 @@ correctly denies at baseline, then trusts the forged "August 2026 audit" note an
 reasons its way to a conditional grant 5/6 times. (gpt-oss-20b returned "unclear"
 on 5/5 baseline trials — it hedges rather than deciding.)
 
-### New attack techniques vs DeepSeek v4-flash
+### Amplification vs recency — v4/v5 across models
 
-| Technique | grant | Fisher p vs v3 (8%) |
+| Model | v4 (3× repetition) | v5 (temporal) |
 |---|---|---|
-| v3 single trusted-tag | 8% (1/12) | — |
-| v4 3× repetition | **75% (6/8)** | **0.0044** |
-| v5 temporal "latest wins" | **100% (8/8)** | **0.0001** |
-| v6 forged policy | 0% (0/8) | — |
+| DeepSeek v4-flash | 75% (6/8) | 100% (8/8) |
+| DeepSeek v4-pro | 88% (7/8) | 100% (8/8) |
+| Nemotron-omni-30b (reasoning) | 100% (8/8) | 100% (4/4*) |
+| llama3.2:3b (weak) | 0% (0/8) | 13% (1/8) |
 
-Corroboration (v4) and recency (v5) crack the strong model that single injection
-(v3) barely touched. The weak model was *not* flipped by the same techniques
-(v4 0/8, v5 1/8) — flash v4 ≫ llama3.2 v4 (p=0.0035).
+\*v5 on nemotron in progress at time of commit (4/4 grants).
+
+Fisher (flash): v4 vs v3 p=0.0044, v5 vs v3 p=0.0001. The forged-policy attack
+(v6) failed everywhere (flash 0/8, llama3.2 0/8).
 
 ### What this means
 
 Model capability does not protect against memory poisoning — it changes the
-attack surface. Weak models are too noisy to flip systematically; strong models
-are vulnerable to evidence-weighing attacks (corroboration, recency); reasoning
-models are vulnerable to forged trust (the unauthenticated `context` tag). The one
-attack that scaled to every strong/reasoning model is the trusted-tag forgery
-(F3) — an architectural trust-signal problem, not a prompt-injection problem.
+attack surface:
+- **Weak models** are too noisy to flip systematically (v4/v5 barely move them).
+- **Strong models** are vulnerable to evidence-weighing attacks — corroboration
+  (v4) and recency (v5) flip them at 75–100%.
+- **Reasoning models** are the most vulnerable to forged trust (v3 = 83%, v4/v5
+  ≈ 100%) — they reason carefully, then trust the forged fact and conclude grant.
+
+The attacks that scale to every strong/reasoning model are exactly the ones that
+exploit Hindsight's unauthenticated `context` tag (F3): an architectural
+trust-signal problem, not a prompt-injection problem.
 
 ## Known limitations
 
