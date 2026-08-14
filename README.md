@@ -228,10 +228,8 @@ on 5/5 baseline trials — it hedges rather than deciding.)
 |---|---|---|
 | DeepSeek v4-flash | 75% (6/8) | 100% (8/8) |
 | DeepSeek v4-pro | 88% (7/8) | 100% (8/8) |
-| Nemotron-omni-30b (reasoning) | 100% (8/8) | 100% (4/4*) |
+| Nemotron-omni-30b (reasoning) | 100% (8/8) | 100% (8/8) |
 | llama3.2:3b (weak) | 0% (0/8) | 13% (1/8) |
-
-\*v5 on nemotron in progress at time of commit (4/4 grants).
 
 Fisher (flash): v4 vs v3 p=0.0044, v5 vs v3 p=0.0001. The forged-policy attack
 (v6) failed everywhere (flash 0/8, llama3.2 0/8).
