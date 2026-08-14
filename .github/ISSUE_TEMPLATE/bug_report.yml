@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a defect in the harness, its scripts, or its reporting.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. This is a reproducibility-focused
+        repository, so please be as specific as possible.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Git tag or commit hash you are running.
+      placeholder: "v1.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you observe?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened instead?
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Commands, environment variables, and LLM backend used.
+      render: bash
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Error messages, tracebacks, or trial records.
+      render: shell
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Python version, and Hindsight/LLM backend.
+      placeholder: "Linux, Python 3.12, Hindsight + Ollama llama3.2:3b"

@@ -1,11 +1,30 @@
 # Hindsight Memory Poisoning
 
+<p align="center">
+  <a href="https://github.com/mindisolutions/hindsight-memory-poison/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
+  <a href="https://github.com/mindisolutions/hindsight-memory-poison/actions/workflows/pylint.yml"><img src="https://github.com/mindisolutions/hindsight-memory-poison/actions/workflows/pylint.yml/badge.svg" alt="Pylint CI"></a>
+  <a href="https://github.com/mindisolutions/hindsight-memory-poison/releases"><img src="https://img.shields.io/github/v/release/mindisolutions/hindsight-memory-poison" alt="Release"></a>
+  <img src="https://img.shields.io/badge/python-3.10%20%7C%203.12-blue" alt="Python 3.10 | 3.12">
+</p>
+
 Security research project against [Hindsight](https://github.com/vectorize-io/hindsight) (Vectorize),
 an open-source agent memory system (retain / recall / reflect). This runs against a **real, local
 Hindsight instance** (Docker, Postgres-backed) reasoning with real LLMs — the original N=15 study
 used a local `llama3.2:3b` (Ollama); a follow-up stress test extended it to DeepSeek (`v4-flash`,
 `v4-pro`) and an OpenRouter reasoning model (`nemotron-omni-30b`). Nothing here is mocked or
 simulated.
+
+## Table of contents
+
+- [Result, in short](#result-in-short)
+- [Case study: does memory poisoning change a real access-control decision?](#case-study-does-memory-poisoning-change-a-real-access-control-decision)
+- [Setup](#setup)
+- [Layout](#layout)
+- [Counterfactual probe (causality check, F2)](#counterfactual-probe-causality-check-f2)
+- [DeepSeek comparison (stronger model)](#deepseek-comparison-stronger-model)
+- [Stress test: model × technique matrix](#stress-test-model--technique-matrix)
+- [Testing Hindsight itself (retrieval mechanisms)](#testing-hindsight-itself-retrieval-mechanisms)
+- [Known limitations](#known-limitations)
 
 ## Result, in short
 

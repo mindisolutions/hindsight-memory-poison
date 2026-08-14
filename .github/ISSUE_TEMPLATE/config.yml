@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a vulnerability privately
+    url: https://github.com/mindisolutions/hindsight-memory-poison/security/advisories/new
+    about: Use a private security advisory rather than a public issue.
+  - name: Upstream — Hindsight (Vectorize)
+    url: https://github.com/vectorize-io/hindsight
+    about: Defects in Hindsight itself should be reported upstream, not here.

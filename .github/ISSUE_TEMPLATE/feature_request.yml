@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an improvement to the harness or its reporting.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        New attack techniques, stronger statistics, and better reporting are all
+        welcome. Please describe the gap and how the change would be validated.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What gap or limitation does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the change and how its effect would be measured.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Other approaches you considered and why they are less suitable.

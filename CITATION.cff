@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software or its findings, please cite it using the metadata below."
+title: "Hindsight Memory Poisoning"
+abstract: >-
+  Adversarial security evaluation of Hindsight's long-term memory system
+  (retain / recall / reflect), quantifying the prompt-injection and
+  memory-poisoning attack surface across multiple LLMs: a local
+  llama3.2:3b, DeepSeek (v4-flash and v4-pro), and an OpenRouter reasoning
+  model (nemotron-omni-30b). Every technique runs against a real, local
+  Hindsight instance — nothing is mocked or simulated.
+version: 1.0.0
+date-released: 2026-08-14
+license: MIT
+repository-code: "https://github.com/mindisolutions/hindsight-memory-poison"
+url: "https://github.com/mindisolutions/hindsight-memory-poison"
+authors:
+  - name: "mindisolutions"
+    website: "https://github.com/mindisolutions"
+keywords:
+  - "llm-security"
+  - "prompt-injection"
+  - "memory-poisoning"
+  - "hindsight"
+  - "adversarial-evaluation"
+  - "ai-safety"
+  - "red-team"
