@@ -1,12 +1,17 @@
-# Upstream engagement — POSTED
+# Upstream engagement — LIVE
 
-> ✅ **Posted** (repo kept private — self-contained issue body, no link):
-> - Issue: https://github.com/vectorize-io/hindsight/issues/3555
-> - PR: https://github.com/vectorize-io/hindsight/pull/3556
+> Current state of the upstream engagement (`vectorize-io/hindsight`):
+>
+> - **#3558** — security-evaluation report (posted by @Luscaswolf) — CLOSED by
+>   maintainer @nicoloboschi (scoped: each request is self-contained, no
+>   server-data/tool access).
+> - **#3559** — `docs(retain): document context as caller-supplied trust hint`
+>   (posted by @Luscaswolf) — OPEN.
+> - **#3562** — hardening proposal (the body below) — OPEN.
 >
 > Attribution: [@Luscaswolf](https://github.com/Luscaswolf) +
-> [@handnewb](https://github.com/handnewb). The body below is the exact text
-> posted to the issue.
+> [@handnewb](https://github.com/handnewb). The body below is the exact text of
+> the hardening proposal posted to #3562.
 
 ---
 
