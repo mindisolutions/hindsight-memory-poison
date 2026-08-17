@@ -25,6 +25,7 @@ simulated.
 - [Stress test: model × technique matrix](#stress-test-model--technique-matrix)
 - [Testing Hindsight itself (retrieval mechanisms)](#testing-hindsight-itself-retrieval-mechanisms)
 - [Security probes (Phase 1)](#security-probes-phase-1)
+- [Security probes (Phase 2)](#security-probes-phase-2)
 - [Known limitations](#known-limitations)
 - [Related work](#related-work)
 
@@ -371,6 +372,21 @@ Two nuances worth noting:
 
 These are preliminary (n=1, one model, one instance); treat them as pointers,
 not conclusions.
+
+## Security probes (Phase 2)
+
+`scripts/13_phase2_probes.py` targets the retrieval mechanism itself (DeepSeek
+instance, single run each):
+
+| Probe | Question | Result |
+|---|---|---|
+| Proof-count laundering | Does N corroborating facts inflate `proof_count` and flood retrieval? | **Floods retrieval** — 5 corroborating facts returned 6 results vs 2 for a single claim; `proof_count` is *not* exposed in the recall trace |
+| Recency ordering | Does `retain(timestamp=…)` reorder recall by age? | **No reordering** across a 90-day gap — the recency boost did not dominate ranking (consistent with v5 being text-framing-driven, not boost-driven) |
+| Metadata-null (#3209) | Does `retain` accept null metadata that `recall` later rejects? | **Not reachable via SDK** — client-side validation rejects null metadata before the server; reproducing #3209 needs a raw-HTTP caller |
+
+Interpretation: v4's power is **retrieval flooding** (more results for the LLM to
+read), not a `proof_count` ranking term; the recency boost is incidental; and the
+#3209 asymmetry is gated behind raw HTTP (the SDK validates client-side).
 
 ## Known limitations
 

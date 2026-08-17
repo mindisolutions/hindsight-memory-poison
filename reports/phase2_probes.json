@@ -1,0 +1,21 @@
+{
+  "run_id": "20260817T131650-2ab4",
+  "timestamp": "2026-08-17T13:16:50.895039+00:00",
+  "proof_count": {
+    "single_claim_proof_counts": [],
+    "laundered_5x_proof_counts": [],
+    "single_result_count": 2,
+    "laundered_result_count": 6
+  },
+  "recency": {
+    "result_count": 3,
+    "maintenance_rank": 0,
+    "operational_rank": 1,
+    "newer_ranked_above_older": false
+  },
+  "metadata_null": {
+    "retain": "retain-rejected: ValidationError: 1 validation error for MemoryItem\nmetadata.src\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For furt",
+    "recall": "recall-ok",
+    "recall_snippet": "{\"results\": [], \"trace\": {\"query\": {\"query_text\": \"null metadata fact\", \"query_embedding\": [0.005302405916154385, 0.019642259925603867, -0.020076803863048553, -0.05405762046575546, 0.03602217137813568"
+  }
+}

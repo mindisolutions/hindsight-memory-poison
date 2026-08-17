@@ -72,6 +72,22 @@ def wilson_ci(x: int, n: int, z: float = 1.96) -> tuple[float, float]:
     return (center - margin) / denom, (center + margin) / denom
 
 
+def cohens_h(p1: float, p2: float) -> float:
+    """Cohen's h effect size for two proportions (arcsine transform)."""
+    return 2 * (math.asin(math.sqrt(p2)) - math.asin(math.sqrt(p1)))
+
+
+def _h_label(h: float) -> str:
+    a = abs(h)
+    if a < 0.2:
+        return "negligible"
+    if a < 0.5:
+        return "small"
+    if a < 0.8:
+        return "medium"
+    return "large"
+
+
 def _norm_ppf(p: float) -> float:
     """Inverse standard-normal CDF (Winitzki approximation, ~1e-3 rel. error)."""
     x = 2 * p - 1
@@ -165,6 +181,9 @@ def main() -> None:
             p = fisher_exact(base_g, base_ng, g_g, g_ng)
             print(f"  Fisher exact  {key:10s} ({g_g}/{g['n']}) vs baseline ({base_g}/{base['n']}): p = {p:.4f}")
             summary[key]["fisher_exact_p_vs_baseline"] = round(p, 4)
+            h = cohens_h(base_g / base["n"], g_g / g["n"])
+            print(f"  Cohen's h     {key:10s} vs baseline: h = {h:+.3f} ({_h_label(h)})")
+            summary[key]["cohens_h_vs_baseline"] = round(h, 3)
 
     print("\nWilson 95% CI on grant-rate:")
     for key, g in summary.items():

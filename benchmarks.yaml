@@ -1,0 +1,23 @@
+# Config-driven benchmark manifest for scripts/benchmark.py
+#
+# Each entry runs a numbered script against a Hindsight study instance and
+# captures its stdout to reports/benchmarks/<name>.log.
+#
+# NOTE: trial scripts (01-10) append to their JSONL output and must not run
+# concurrently; the benchmark runner executes entries sequentially. Point
+# REPORTS_DIR at a scratch dir when you want CI runs isolated from the
+# committed trial data.
+
+defaults:
+  base_url: http://localhost:8890
+  reports_dir: reports/ci
+
+benchmarks:
+  - name: phase1-security
+    script: scripts/12_security_probes.py
+
+  - name: phase2-security
+    script: scripts/13_phase2_probes.py
+
+  - name: aggregate
+    script: scripts/aggregate_report.py

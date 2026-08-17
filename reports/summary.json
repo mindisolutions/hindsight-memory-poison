@@ -39,6 +39,7 @@
     ],
     "run_count": 3,
     "fisher_exact_p_vs_baseline": 0.3295,
+    "cohens_h_vs_baseline": -0.563,
     "grant_rate_wilson_ci95": [
       0.0119,
       0.2982
@@ -63,6 +64,7 @@
     ],
     "run_count": 4,
     "fisher_exact_p_vs_baseline": 0.6513,
+    "cohens_h_vs_baseline": -0.338,
     "grant_rate_wilson_ci95": [
       0.0374,
       0.3788
@@ -86,6 +88,7 @@
     ],
     "run_count": 3,
     "fisher_exact_p_vs_baseline": 1.0,
+    "cohens_h_vs_baseline": 0.0,
     "grant_rate_wilson_ci95": [
       0.109,
       0.5195
