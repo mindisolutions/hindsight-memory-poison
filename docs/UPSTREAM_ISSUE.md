@@ -1,9 +1,12 @@
-# Upstream issue — DRAFT (not yet posted)
+# Upstream engagement — POSTED
 
-> ⚠️ This is a **prepared draft** for `vectorize-io/hindsight`. It has **not**
-> been posted. Awaiting the publication decision (repo visibility) before it goes
-> out. See the "Next actions — Phase 3" section of
-> [`docs/EXPANSION_PLAN.md`](EXPANSION_PLAN.md).
+> ✅ **Posted** (repo kept private — self-contained issue body, no link):
+> - Issue: https://github.com/vectorize-io/hindsight/issues/3555
+> - PR: https://github.com/vectorize-io/hindsight/pull/3556
+>
+> Attribution: [@Luscaswolf](https://github.com/Luscaswolf) +
+> [@handnewb](https://github.com/handnewb). The body below is the exact text
+> posted to the issue.
 
 ---
 
