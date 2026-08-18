@@ -1,13 +1,20 @@
-# Upstream engagement — LIVE
+# Upstream engagement — CLOSED
 
-> Current state of the upstream engagement (`vectorize-io/hindsight`):
+> Final state of the upstream engagement (`vectorize-io/hindsight`):
 >
 > - **#3558** — security-evaluation report (posted by @Luscaswolf) — CLOSED by
 >   maintainer @nicoloboschi (scoped: each request is self-contained, no
 >   server-data/tool access).
 > - **#3559** — `docs(retain): document context as caller-supplied trust hint`
->   (posted by @Luscaswolf) — OPEN.
-> - **#3562** — hardening proposal (the body below) — OPEN.
+>   (posted by @Luscaswolf) — CLOSED by @nicoloboschi (not merged).
+> - **#3562** — hardening proposal (the body below) — CLOSED by @nicoloboschi
+>   (`not_planned`).
+>
+> Maintainer's position (from #3559): Hindsight should run authenticated or in a
+> local/air-gapped environment; `context` is just one of several prompt inputs
+> with nothing special about it; the `invalidate` endpoint is the existing
+> remediation. No code/docs change was merged upstream; the team withdrew
+> gracefully (closing apology on #3559).
 >
 > Attribution: [@Luscaswolf](https://github.com/Luscaswolf) +
 > [@handnewb](https://github.com/handnewb). The body below is the exact text of
