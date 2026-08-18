@@ -64,7 +64,5 @@ across four models (`llama3.2:3b`, DeepSeek `v4-flash`/`v4-pro`,
 
 No CVE or 0-day is claimed. Happy to collaborate on any hardening item.
 
-<!-- If the study repository is made public, append:
 Full study (methodology, per-model grant rates, statistics):
 https://github.com/mindisolutions/hindsight-memory-poison
--->
